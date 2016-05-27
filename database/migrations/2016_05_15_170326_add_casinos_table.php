@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCasinoTable extends Migration
+class AddCasinosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class AddCasinoTable extends Migration
      */
     public function up()
     {
-        Schema::create('casino', function (Blueprint $table) {
+        Schema::create('casinos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('description')->nullable();
@@ -27,6 +27,6 @@ class AddCasinoTable extends Migration
      */
     public function down()
     {
-        Schema::drop('casino');
+        Schema::drop('casinos');
     }
 }

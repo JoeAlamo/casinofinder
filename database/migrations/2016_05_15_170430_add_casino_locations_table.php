@@ -23,7 +23,7 @@ class AddCasinoLocationsTable extends Migration
             $table->timestamps();
 
             $table->foreign('casino_id')
-                ->references('id')->on('casino')
+                ->references('id')->on('casinos')
                 ->onDelete('cascade');
             $table->index(['latitude', 'longitude']);
         });

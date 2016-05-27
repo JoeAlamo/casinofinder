@@ -8,7 +8,8 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
+                    <a class="btn btn-primary" href="{{ URL::route('admin.casino.create') }}" role="button">Add Casinos</a>
+                    <a class="btn btn-default" href="{{ URL::route('admin.casino.index') }}" role="button">View Casinos</a>
                 </div>
             </div>
         </div>

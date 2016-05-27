@@ -17,7 +17,9 @@ class AdminCasinoController extends Controller
      */
     public function index()
     {
-        //
+        $casinos = Casino::all();
+
+        return \View::make('admin.casino.index', compact('casinos'));
     }
 
     /**
@@ -27,7 +29,7 @@ class AdminCasinoController extends Controller
      */
     public function create()
     {
-        //
+        return \View::make('admin.casino.create');
     }
 
     /**

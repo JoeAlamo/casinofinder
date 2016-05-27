@@ -23,3 +23,7 @@ Route::any('/register', function () {
 
 Route::get('/admin', 'Admin\AdminController@index')
     ->middleware('auth');
+
+Route::group(['middleware' => 'auth', 'namespace' => 'Admin', 'prefix' => 'admin'], function () {
+    Route::resource('casino', 'AdminCasinoController');
+});

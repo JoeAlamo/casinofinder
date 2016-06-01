@@ -3,13 +3,20 @@
 namespace CasinoFinder\Http\Controllers\Admin;
 
 use CasinoFinder\Models\Casino;
+use CasinoFinder\Models\CasinoOpeningTime;
+use CasinoFinder\Validation\CasinoFormValidator;
 use Illuminate\Http\Request;
 
 use CasinoFinder\Http\Requests;
 use CasinoFinder\Http\Controllers\Controller;
+use Illuminate\Validation\ValidationException;
 
 class AdminCasinoController extends Controller
 {
+    public function __construct() {
+        $this->middleware('openingTimeTransform', ['only' => ['store', 'update']]);
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -36,11 +43,33 @@ class AdminCasinoController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param CasinoFormValidator $casinoValidator
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CasinoFormValidator $casinoValidator)
     {
-        //
+        try {
+            $casinoValidator->validate($request->all());
+            $casino = Casino::create($request->only(['name', 'description']));
+            $casino->casinoLocation()->create(
+                $request->only(['address', 'city', 'postal_code', 'latitude', 'longitude', 'google_maps_place_id'])
+            );
+            $casino->casinoOpeningTimes()->saveMany(
+                array_map(function($openingTime) {
+                    return new CasinoOpeningTime([
+                        'day' => $openingTime['day'],
+                        'open_time' => $openingTime['open_time'],
+                        'close_time' => $openingTime['close_time']
+                    ]);
+                }, $request->input('opening_time', []))
+            );
+
+            return $this->show($casino);
+        } catch (ValidationException $e) {
+            return \Redirect::back()
+                ->withInput($request->except(['_token']))
+                ->withErrors($e->validator->errors());
+        }
     }
 
     /**
@@ -51,7 +80,7 @@ class AdminCasinoController extends Controller
      */
     public function show(Casino $casino)
     {
-        //
+        return $casino->load(['casinoLocation', 'casinoOpeningTimes']);
     }
 
     /**

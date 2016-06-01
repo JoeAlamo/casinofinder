@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 class AdminCasinoController extends Controller
 {
     public function __construct() {
-        $this->middleware('openingTimeTransform', ['only' => ['store', 'update']]);
+
     }
     
     /**

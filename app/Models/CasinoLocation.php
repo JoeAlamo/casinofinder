@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class CasinoLocation extends Model
 {
     protected $fillable = [
-        'address', 'city', 'postal_code', 'latitude', 'longitude'
+        'address', 'city', 'postal_code', 'latitude', 'longitude', 'google_maps_place_id'
     ];
 
     public function casino() {

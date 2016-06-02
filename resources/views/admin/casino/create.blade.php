@@ -6,9 +6,20 @@
         <div class="col-md-10 col-md-offset-1">
             <h1>Add a Casino</h1>
             <div class="panel panel-default">
-                {!! Form::open(['route' => 'admin.casino.store']) !!}
+                {!! Form::open(['route' => 'admin.casino.store', 'id' => 'admin-casino-form']) !!}
                 <div class="panel-body">
                     <p>Required fields are followed by <strong><abbr title="required">*</abbr></strong>.</p>
+
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <strong>Please fix the following errors!</strong>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <section>
                         <h2>General Info</h2>
@@ -124,5 +135,8 @@
 @section('scripts')
     {!! HTML::script('https://maps.googleapis.com/maps/api/js?libraries=places') !!}
     {!! HTML::script('/assets/js/admin/casino/googleMapsCreateForm.js') !!}
+    {!! HTML::script('/assets/js/formValidation/formValidation.min.js') !!}
+    {!! HTML::script('/assets/js/formValidation/bootstrap.min.js') !!}
+    {!! HTML::script('/assets/js/admin/casino/formValidation.js') !!}
     {!! HTML::script('/assets/js/admin/casino/openingTimes.js') !!}
 @append

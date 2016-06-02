@@ -50,7 +50,10 @@ $(document).ready(function() {
 
     // Configure the auto-complete and bind listener
     function initAutocomplete() {
-        autoComplete = new google.maps.places.Autocomplete(document.getElementById('address_autocomplete'));
+        autoComplete = new google.maps.places.Autocomplete(
+            document.getElementById('address_autocomplete'),
+            {types: ['address']}
+        );
 
         // Upon selecting address, populate form fields
         autoComplete.addListener('place_changed', fillInAddress);
@@ -74,7 +77,8 @@ $(document).ready(function() {
 
     // Upon selecting an address, autofill the form and display location on map
     function fillInAddress() {
-        var place = autoComplete.getPlace();
+        var place = autoComplete.getPlace(),
+            form = $('#admin-casino-form');
 
         // We want to fill in the street address, city, postal code, place ID, lat and long
 
@@ -111,6 +115,11 @@ $(document).ready(function() {
         $.each(matchingAddressComponents, function (index, matchingAddressComponent) {
             $(matchingAddressComponent.matchingFormComponent.id).val(matchingAddressComponent.long_name);
         });
+
+        // Trigger validation of address, city, postal_code
+        form.formValidation('revalidateField', 'address')
+            .formValidation('revalidateField', 'city')
+            .formValidation('revalidateField', 'postal_code');
 
 
         // Show location on map

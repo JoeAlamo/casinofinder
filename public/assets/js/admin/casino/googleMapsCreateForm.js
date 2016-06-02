@@ -32,6 +32,7 @@ $(document).ready(function() {
         }
     };
 
+    // Configure the map
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 54.9778, lng: -1.6129},
@@ -47,6 +48,7 @@ $(document).ready(function() {
         });
     }
 
+    // Configure the auto-complete and bind listener
     function initAutocomplete() {
         autoComplete = new google.maps.places.Autocomplete(document.getElementById('address_autocomplete'));
 
@@ -54,6 +56,23 @@ $(document).ready(function() {
         autoComplete.addListener('place_changed', fillInAddress);
     }
 
+    // If we are being returned to the page due to errors etc., make the form usable!
+    function detectExistingInput() {
+        var latitudeInput = $(formComponents.latitude.id),
+            longitudeInput = $(formComponents.longitude.id);
+
+        if (!latitudeInput.val().length && !longitudeInput.val().length) {
+            return;
+        }
+
+        $.each(formComponents, function(index, formComponent) {
+            $(formComponent.id).prop("disabled", false);
+        });
+
+        showLocationOnMap(new google.maps.LatLng(latitudeInput.val(), longitudeInput.val()));
+    }
+
+    // Upon selecting an address, autofill the form and display location on map
     function fillInAddress() {
         var place = autoComplete.getPlace();
 
@@ -95,13 +114,18 @@ $(document).ready(function() {
 
 
         // Show location on map
-        map.panTo(place.geometry.location);
+        showLocationOnMap(place.geometry.location);
+    }
+
+    function showLocationOnMap(LatLng) {
+        map.panTo(LatLng);
         map.setZoom(17);
 
-        marker.setPosition(place.geometry.location);
+        marker.setPosition(LatLng);
         marker.setMap(map);
     }
 
     initMap();
     initAutocomplete();
+    detectExistingInput();
 });

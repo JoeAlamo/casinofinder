@@ -114,6 +114,12 @@ class AdminCasinoController extends Controller
      */
     public function destroy(Casino $casino)
     {
-        //
+        // FK constraints will cascade and delete casino location + opening times
+        try {
+            $casino->delete();
+            return \Response::json('Casino deleted successfully!');
+        } catch (\Exception $e) {
+            return \Response::json('Error deleting casino', 500);
+        }
     }
 }

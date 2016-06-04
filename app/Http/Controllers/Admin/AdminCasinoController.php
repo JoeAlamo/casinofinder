@@ -36,7 +36,8 @@ class AdminCasinoController extends Controller
      */
     public function create()
     {
-        return \View::make('admin.casino.create');
+        return \View::make('admin.casino.create')
+                    ->nest('casinoForm', 'admin.casino.casinoForm');
     }
 
     /**
@@ -91,7 +92,16 @@ class AdminCasinoController extends Controller
      */
     public function edit(Casino $casino)
     {
-        //
+        $casino->load(['casinoLocation', 'casinoOpeningTimes']);
+
+        // Format casino data so it can bind to the form
+        $formattedCasino = array_merge($casino->casinoLocation->getOriginal(), $casino->getOriginal());
+        $formattedCasino['opening_time'] = $casino->casinoOpeningTimes->map(function ($model) {
+            return $model->getOriginal();
+        })->all();
+
+        return \View::make('admin.casino.edit', ['casino' => (object)$formattedCasino])
+            ->nest('casinoForm', 'admin.casino.casinoForm', ['casino' => (object)$formattedCasino]);
     }
 
     /**
@@ -99,11 +109,34 @@ class AdminCasinoController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  Casino $casino
+     * @param CasinoFormValidator $casinoValidator
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Casino $casino)
+    public function update(Request $request, Casino $casino, CasinoFormValidator $casinoValidator)
     {
-        //
+        try {
+            $casinoValidator->validate($request->all());
+            $casino->update($request->only(['name', 'description']));
+            $casino->casinoLocation()->update(
+                $request->only(['address', 'city', 'postal_code', 'latitude', 'longitude', 'google_maps_place_id'])
+            );
+            $casino->casinoOpeningTimes()->delete();
+            $casino->casinoOpeningTimes()->saveMany(
+                array_map(function($openingTime) {
+                    return new CasinoOpeningTime([
+                        'day' => $openingTime['day'],
+                        'open_time' => $openingTime['open_time'],
+                        'close_time' => $openingTime['close_time']
+                    ]);
+                }, $request->input('opening_time', []))
+            );
+
+            return $this->show($casino);
+        } catch (ValidationException $e) {
+            return \Redirect::back()
+                ->withInput($request->except(['_token']))
+                ->withErrors($e->validator->errors());
+        }
     }
 
     /**

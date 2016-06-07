@@ -13,9 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 class AdminCasinoController extends Controller
 {
-    public function __construct() {
-
-    }
     
     /**
      * Display a listing of the resource.
@@ -81,7 +78,11 @@ class AdminCasinoController extends Controller
      */
     public function show(Casino $casino)
     {
-        return $casino->load(['casinoLocation', 'casinoOpeningTimes']);
+        $casino->load(['casinoLocation', 'casinoOpeningTimes' => function ($query) {
+            $query->orderBy('day');
+        }]);
+
+        return \View::make('admin.casino.show', compact('casino'));
     }
 
     /**

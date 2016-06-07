@@ -35,7 +35,8 @@
 @endsection
 @section('scripts')
     {!! HTML::script('https://maps.googleapis.com/maps/api/js?libraries=places') !!}
-    {!! HTML::script('/assets/js/admin/casino/googleMapsCreateForm.js') !!}
+    {!! HTML::script('/assets/js/admin/casino/googleMap.js') !!}
+    {!! HTML::script('/assets/js/admin/casino/casinoForm.js') !!}
     {!! HTML::script('/assets/js/formValidation/formValidation.min.js') !!}
     {!! HTML::script('/assets/js/formValidation/bootstrap.min.js') !!}
     {!! HTML::script('/assets/js/admin/casino/formValidation.js') !!}

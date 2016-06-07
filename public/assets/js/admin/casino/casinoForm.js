@@ -4,8 +4,8 @@
 
 $(document).ready(function() {
 
-    var autoComplete, map, marker;
-    var formComponents = {
+    var autoComplete,
+        formComponents = {
         name: {
             id: '#address',
             addressComponent: false
@@ -32,22 +32,6 @@ $(document).ready(function() {
         }
     };
 
-    // Configure the map
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: 54.9778, lng: -1.6129},
-            zoom: 6,
-            mapTypeControl: false,
-            panControl: false,
-            zoomControl: false,
-            streetViewControl: false
-        });
-
-        marker = new google.maps.Marker({
-            position: {lat: 54.9778, lng: -1.6129}
-        });
-    }
-
     // Configure the auto-complete and bind listener
     function initAutocomplete() {
         autoComplete = new google.maps.places.Autocomplete(
@@ -72,7 +56,7 @@ $(document).ready(function() {
             $(formComponent.id).prop("disabled", false);
         });
 
-        showLocationOnMap(new google.maps.LatLng(latitudeInput.val(), longitudeInput.val()));
+        googleMap.showLocation(new google.maps.LatLng(latitudeInput.val(), longitudeInput.val()));
     }
 
     // Upon selecting an address, autofill the form and display location on map
@@ -123,18 +107,10 @@ $(document).ready(function() {
 
 
         // Show location on map
-        showLocationOnMap(place.geometry.location);
+        googleMap.showLocation(place.geometry.location);
     }
 
-    function showLocationOnMap(LatLng) {
-        map.panTo(LatLng);
-        map.setZoom(17);
-
-        marker.setPosition(LatLng);
-        marker.setMap(map);
-    }
-
-    initMap();
+    googleMap.initMap('map');
     initAutocomplete();
     detectExistingInput();
 });

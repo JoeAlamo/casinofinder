@@ -27,3 +27,11 @@ Route::get('/admin', 'Admin\AdminController@index')
 Route::group(['middleware' => 'auth', 'namespace' => 'Admin', 'prefix' => 'admin'], function () {
     Route::resource('casino', 'AdminCasinoController');
 });
+
+Route::group(['as' => 'casinoFinder.', 'namespace' => 'CasinoFinder', 'prefix' => 'casinoFinder'], function () {
+    Route::get('getAllCasinos', 'CasinoFinderController@getAllCasinos')
+        ->name('getAllCasinos');
+
+    Route::get('findNearestCasino', 'CasinoFinderController@findNearestCasino')
+        ->name('findNearestCasino');
+});

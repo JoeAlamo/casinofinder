@@ -45,6 +45,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        // Generic handler for validation errors - send em back with input + errors!
+        if ($e instanceof ValidationException) {
+            return \Redirect::back()
+                ->withInput($request->except(['_token']))
+                ->withErrors($e->validator->errors());
+        }
+
         return parent::render($request, $e);
     }
 }

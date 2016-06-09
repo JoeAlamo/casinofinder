@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 use CasinoFinder\Http\Requests;
 use CasinoFinder\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
 
 class AdminCasinoController extends Controller
 {
@@ -54,16 +53,10 @@ class AdminCasinoController extends Controller
      */
     public function store(Request $request, CasinoFormValidator $casinoValidator)
     {
-        try {
-            $casinoValidator->validate($request->all());
-            $casino = $this->casinoService->createNewCasino($request->except(['_token']));
+        $casinoValidator->validate($request->all());
+        $casino = $this->casinoService->createNewCasino($request->except(['_token']));
 
-            return \View::make('admin.casino.show', compact('casino'));
-        } catch (ValidationException $e) {
-            return \Redirect::back()
-                ->withInput($request->except(['_token']))
-                ->withErrors($e->validator->errors());
-        }
+        return \View::make('admin.casino.show', compact('casino'));
     }
 
     /**
@@ -109,16 +102,10 @@ class AdminCasinoController extends Controller
      */
     public function update(Request $request, $id, CasinoFormValidator $casinoValidator)
     {
-        try {
-            $casinoValidator->validate($request->all());
-            $casino = $this->casinoService->updateCasino($id, $request->except(['_token']));
+        $casinoValidator->validate($request->all());
+        $casino = $this->casinoService->updateCasino($id, $request->except(['_token']));
 
-            return \View::make('admin.casino.show', compact('casino'));
-        } catch (ValidationException $e) {
-            return \Redirect::back()
-                ->withInput($request->except(['_token']))
-                ->withErrors($e->validator->errors());
-        }
+        return \View::make('admin.casino.show', compact('casino'));
     }
 
     /**

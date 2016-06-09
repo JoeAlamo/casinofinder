@@ -2,6 +2,8 @@
 
 namespace CasinoFinder\Providers;
 
+use CasinoFinder\Services\CasinoService;
+use CasinoFinder\Services\CasinoServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(CasinoServiceInterface::class, CasinoService::class);
     }
 
     /**

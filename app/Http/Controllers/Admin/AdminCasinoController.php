@@ -2,8 +2,7 @@
 
 namespace CasinoFinder\Http\Controllers\Admin;
 
-use CasinoFinder\Models\Casino;
-use CasinoFinder\Models\CasinoOpeningTime;
+use CasinoFinder\Services\CasinoServiceInterface;
 use CasinoFinder\Validation\CasinoFormValidator;
 use Illuminate\Http\Request;
 
@@ -13,6 +12,15 @@ use Illuminate\Validation\ValidationException;
 
 class AdminCasinoController extends Controller
 {
+
+    /**
+     * @var CasinoServiceInterface
+     */
+    private $casinoService;
+
+    public function __construct(CasinoServiceInterface $casinoService) {
+        $this->casinoService = $casinoService;
+    }
     
     /**
      * Display a listing of the resource.
@@ -21,7 +29,7 @@ class AdminCasinoController extends Controller
      */
     public function index()
     {
-        $casinos = Casino::all();
+        $casinos = $this->casinoService->getAllCasinos();
 
         return \View::make('admin.casino.index', compact('casinos'));
     }
@@ -48,21 +56,9 @@ class AdminCasinoController extends Controller
     {
         try {
             $casinoValidator->validate($request->all());
-            $casino = Casino::create($request->only(['name', 'description']));
-            $casino->casinoLocation()->create(
-                $request->only(['address', 'city', 'postal_code', 'latitude', 'longitude', 'google_maps_place_id'])
-            );
-            $casino->casinoOpeningTimes()->saveMany(
-                array_map(function($openingTime) {
-                    return new CasinoOpeningTime([
-                        'day' => $openingTime['day'],
-                        'open_time' => $openingTime['open_time'],
-                        'close_time' => $openingTime['close_time']
-                    ]);
-                }, $request->input('opening_time', []))
-            );
+            $casino = $this->casinoService->createNewCasino($request->except(['_token']));
 
-            return $this->show($casino);
+            return \View::make('admin.casino.show', compact('casino'));
         } catch (ValidationException $e) {
             return \Redirect::back()
                 ->withInput($request->except(['_token']))
@@ -73,14 +69,12 @@ class AdminCasinoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Casino $casino
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Casino $casino)
+    public function show($id)
     {
-        $casino->load(['casinoLocation', 'casinoOpeningTimes' => function ($query) {
-            $query->orderBy('day');
-        }]);
+        $casino = $this->casinoService->getCasino($id, true);
 
         return \View::make('admin.casino.show', compact('casino'));
     }
@@ -88,12 +82,12 @@ class AdminCasinoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Casino $casino
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Casino $casino)
+    public function edit($id)
     {
-        $casino->load(['casinoLocation', 'casinoOpeningTimes']);
+        $casino = $this->casinoService->getCasino($id, true);
 
         // Format casino data so it can bind to the form
         $formattedCasino = array_merge($casino->casinoLocation->getOriginal(), $casino->getOriginal());
@@ -109,30 +103,17 @@ class AdminCasinoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Casino $casino
+     * @param  int $id
      * @param CasinoFormValidator $casinoValidator
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Casino $casino, CasinoFormValidator $casinoValidator)
+    public function update(Request $request, $id, CasinoFormValidator $casinoValidator)
     {
         try {
             $casinoValidator->validate($request->all());
-            $casino->update($request->only(['name', 'description']));
-            $casino->casinoLocation()->update(
-                $request->only(['address', 'city', 'postal_code', 'latitude', 'longitude', 'google_maps_place_id'])
-            );
-            $casino->casinoOpeningTimes()->delete();
-            $casino->casinoOpeningTimes()->saveMany(
-                array_map(function($openingTime) {
-                    return new CasinoOpeningTime([
-                        'day' => $openingTime['day'],
-                        'open_time' => $openingTime['open_time'],
-                        'close_time' => $openingTime['close_time']
-                    ]);
-                }, $request->input('opening_time', []))
-            );
+            $casino = $this->casinoService->updateCasino($id, $request->except(['_token']));
 
-            return $this->show($casino);
+            return \View::make('admin.casino.show', compact('casino'));
         } catch (ValidationException $e) {
             return \Redirect::back()
                 ->withInput($request->except(['_token']))
@@ -143,17 +124,15 @@ class AdminCasinoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Casino $casino
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Casino $casino)
+    public function destroy($id)
     {
-        // FK constraints will cascade and delete casino location + opening times
-        try {
-            $casino->delete();
-            return \Response::json('Casino deleted successfully!');
-        } catch (\Exception $e) {
+        if (!$this->casinoService->deleteCasino($id)) {
             return \Response::json('Error deleting casino', 500);
         }
+
+        return \Response::json('Casino deleted successfully!');
     }
 }

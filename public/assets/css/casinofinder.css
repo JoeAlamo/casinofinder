@@ -14,6 +14,10 @@
     margin-top: 20px;
 }
 
+.main-title {
+    font-size: 48px;
+}
+
 .map-responsive {
     overflow:hidden;
     padding-bottom:56.25%;

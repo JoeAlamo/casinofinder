@@ -6,8 +6,7 @@ $(document).ready(function() {
     /*********************
      * VARIABLES
      ********************/
-    var casinos,
-        infoWindow = new google.maps.InfoWindow,
+    var infoWindow = new google.maps.InfoWindow,
         markers = {},
         map,
         viewCasinoModal = $('#view-casino-modal'),
@@ -26,8 +25,7 @@ $(document).ready(function() {
 
     // Iterate through casinos returned, and call createCasinoMarker on each
     function retrieveCasinosSuccess(data) {
-        casinos = data;
-        $.each(casinos, function(id, casino) {
+        $.each(data, function(id, casino) {
             // Create marker for each casino
             var marker = createCasinoMarker(id, casino);
             // Attach event listener to marker to open infowindow upon click
@@ -63,12 +61,18 @@ $(document).ready(function() {
 
             // Build infowindow content
             var content = [
-                '<h4>' + marker.casino.name + '</h4>',
-                '<button role="button" id="viewCasinoButton" class="btn btn-primary center-block" ',
-                'data-id="' + marker.casino.id + '" data-toggle="modal" data-target="#view-casino-modal">View</button>'
-            ].join("");
+                '<h4>' + marker.casino.name + '</h4>'
+            ];
 
-            infoWindow.setContent(content);
+            if (typeof marker.casino.distance !== 'undefined') {
+                content.push('<p class="text-center">' + marker.casino.distance + ' miles away</p>');
+            }
+
+            content.push(
+                '<button role="button" id="viewCasinoButton" class="btn btn-primary btn-block" data-toggle="modal" data-target="#view-casino-modal">View</button>'
+            );
+
+            infoWindow.setContent(content.join(""));
 
             // Open infowindow
             infoWindow.open(marker.getMap(), marker);
@@ -81,15 +85,8 @@ $(document).ready(function() {
 
     // When "View" is clicked in info window, display modal with more information about that casino
     viewCasinoModal.on('show.bs.modal', function(e) {
-        var viewCasinoButton = $(e.relatedTarget),
-            casino,
-            casinoId = viewCasinoButton.attr('data-id');
-
-        // Get casino by ID
-        casino = casinos[casinoId];
-
-        // Build content
-        buildModalContent(casino);
+        // Build content. .anchor is the marker which initiated the infowindow
+        buildModalContent(infoWindow.anchor.casino);
     });
 
     function buildModalContent(casino) {
@@ -101,7 +98,11 @@ $(document).ready(function() {
         }
 
         // Set title
-        viewCasinoModalTitle.text(casino.name);
+        if (typeof casino.distance === 'undefined') {
+            viewCasinoModalTitle.text(casino.name);
+        } else {
+            viewCasinoModalTitle.text(casino.name + ' - ' + casino.distance + ' miles away');
+        }
         // Build body
         var bodyContent = [
             '<div class="row">',
@@ -152,7 +153,7 @@ $(document).ready(function() {
             },
             success: function(data) {
                 if (data.found) {
-                    showCasino(data.id);
+                    showCasino(data.id, data.distance);
                 } else {
                     showNoCasino();
                 }
@@ -161,12 +162,14 @@ $(document).ready(function() {
         });
     }
 
-    function showCasino(casinoId) {
+    function showCasino(casinoId, distance) {
         var casinoFindFailAlert = $('#casino-find-fail');
 
         if (casinoFindFailAlert.is(':visible')) {
             casinoFindFailAlert.slideUp(200);
         }
+
+        markers[casinoId].casino.distance = distance;
 
         google.maps.event.trigger(markers[casinoId], 'click');
     }

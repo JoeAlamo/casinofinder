@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <h1 class="text-center">Find your nearest casino</h1>
+            <h1 class="text-center main-title">Find your nearest casino</h1>
             <div class="row margin-bottom-lg margin-top-lg">
                 <div class="col-md-8 col-md-offset-2">
                     <input type="text" name="users_address" id="users_address" class="form-control hidden" placeholder="Start typing your address">

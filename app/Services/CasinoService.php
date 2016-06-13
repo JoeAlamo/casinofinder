@@ -26,7 +26,7 @@ class CasinoService implements CasinoServiceInterface
 
         return Casino::with(['casinoLocation', 'casinoOpeningTimes' => function($query) {
             $query->orderBy('day');
-        }])->all();
+        }])->get();
     }
 
     /**
@@ -46,13 +46,18 @@ class CasinoService implements CasinoServiceInterface
     /**
      * @inheritDoc
      */
-    public function findNearestCasino($latitude, $longitude, $radius = 100)
+    public function findNearestCasino($latitude, $longitude, $radius = 200)
     {
         $distanceUnit = 69.0; // Miles. Consider altering method so this can be specified
+        // Query cannot be parameterised due to structure (anonymous join, using placeholders as identifiers)
+        // So cast all values to numeric form to defend against SQLi
+        $latitude = (float)$latitude;
+        $longitude = (float)$longitude;
+        $radius = (int)$radius;
 
         // Fast implementation of haversine equation - http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
         $nearestCasino =  \DB::select(
-            'SELECT id FROM 
+            "SELECT casino_id FROM 
                 (
                     SELECT c.casino_id,
                            c.latitude,
@@ -66,10 +71,10 @@ class CasinoService implements CasinoServiceInterface
                               * SIN(RADIANS(c.latitude)))) AS distance
                     FROM casino_locations AS c
                     JOIN (
-                        SELECT :latitude AS latpoint,
-                               :longitude AS longpoint,
-                               :radius AS radius,
-                               :distanceUnit AS distance_unit
+                        SELECT $latitude AS latpoint,
+                               $longitude AS longpoint,
+                               $radius AS radius,
+                               $distanceUnit AS distance_unit
                     ) AS p ON 1=1
                     WHERE c.latitude 
                         BETWEEN p.latpoint - (p.radius / p.distance_unit) 
@@ -79,16 +84,11 @@ class CasinoService implements CasinoServiceInterface
                             AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                 ) AS d
             WHERE distance <= radius
-            LIMIT 1',
-            [
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'radius' => $radius,
-                'distanceUnit' => $distanceUnit,
-            ]
+            ORDER BY distance ASC
+            LIMIT 1"
         );
 
-        return empty($nearestCasino) ? false : $nearestCasino[0]->id;
+        return empty($nearestCasino) ? false : $nearestCasino[0]->casino_id;
     }
 
     /**

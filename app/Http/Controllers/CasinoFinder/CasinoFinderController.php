@@ -9,6 +9,7 @@
 namespace CasinoFinder\Http\Controllers\CasinoFinder;
 
 
+use Carbon\Carbon;
 use CasinoFinder\Http\Controllers\Controller;
 use CasinoFinder\Services\CasinoServiceInterface;
 use CasinoFinder\Validation\CasinoFinderValidator;
@@ -29,7 +30,15 @@ class CasinoFinderController extends Controller
 
     public function getAllCasinos()
     {
-        return $this->casinoService->getAllCasinos(true);
+        $casinos = $this->casinoService->getAllCasinos(true)->keyBy('id');
+        $casinos->map(function($casino) {
+            $casino->casinoOpeningTimes->map(function($openingTime) {
+                $openingTime->open_time = Carbon::createFromFormat('H:i:s', $openingTime->open_time)->format('H:i a');
+                $openingTime->close_time = Carbon::createFromFormat('H:i:s', $openingTime->close_time)->format('H:i a');
+            });
+        });
+
+        return $casinos;
     }
 
     public function findNearestCasino(Request $request, CasinoFinderValidator $casinoFinderValidator)

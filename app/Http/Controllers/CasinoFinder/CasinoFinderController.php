@@ -52,7 +52,11 @@ class CasinoFinderController extends Controller
 
 
             if ($nearestCasino !== false) {
-                return \Response::json(['found' => true, 'id' => $nearestCasino]);
+                return \Response::json([
+                    'found' => true,
+                    'id' => $nearestCasino->casino_id,
+                    'distance' => round($nearestCasino->distance, 2),
+                ]);
             }
 
             return \Response::json(['found' => false]);

@@ -55,40 +55,35 @@ class CasinoService implements CasinoServiceInterface
         $longitude = (float)$longitude;
         $radius = (int)$radius;
 
-        // Fast implementation of haversine equation - http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
-        $nearestCasino =  \DB::select(
-            "SELECT casino_id FROM 
-                (
-                    SELECT c.casino_id,
-                           c.latitude,
-                           c.longitude,
-                           p.radius,
-                           p.distance_unit
-                              * DEGREES(ACOS(COS(RADIANS(p.latpoint))
-                              * COS(RADIANS(c.latitude))
-                              * COS(RADIANS(p.longpoint - c.longitude))
-                              + SIN(RADIANS(p.latpoint))
-                              * SIN(RADIANS(c.latitude)))) AS distance
-                    FROM casino_locations AS c
-                    JOIN (
-                        SELECT $latitude AS latpoint,
-                               $longitude AS longpoint,
-                               $radius AS radius,
-                               $distanceUnit AS distance_unit
-                    ) AS p ON 1=1
-                    WHERE c.latitude 
-                        BETWEEN p.latpoint - (p.radius / p.distance_unit) 
-                            AND p.latpoint + (p.radius / p.distance_unit)
-                    AND c.longitude 
-                        BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                            AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                ) AS d
+        // Fast implementation of Vincenty formula - http://www.plumislandmedia.net/mysql/vicenty-great-circle-distance-formula/
+        // Vincenty over Haversine due to stability with close distances to nearby casinos
+        $nearestCasino = \DB::select("
+            SELECT casino_id, distance FROM (
+                SELECT c.casino_id,
+                       c.latitude,
+                       c.longitude,
+                       p.radius,
+                       p.distance_unit * vincenty(c.latitude, c.longitude, latpoint, longpoint) AS distance
+                FROM casino_locations AS c
+                JOIN (
+                  SELECT  $latitude  AS latpoint,
+                          $longitude AS longpoint,
+                          $radius AS radius,
+                          $distanceUnit AS distance_unit
+                ) AS p
+                WHERE c.latitude 
+                    BETWEEN p.latpoint - (p.radius / p.distance_unit)
+                        AND p.latpoint + (p.radius / p.distance_unit)
+                AND c.longitude
+                    BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                        AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+            ) AS d
             WHERE distance <= radius
-            ORDER BY distance ASC
-            LIMIT 1"
-        );
+            ORDER BY distance
+            LIMIT 1
+        ");
 
-        return empty($nearestCasino) ? false : $nearestCasino[0]->casino_id;
+        return empty($nearestCasino) ? false : $nearestCasino[0];
     }
 
     /**

@@ -33,7 +33,7 @@ interface CasinoServiceInterface
      * @param double $latitude
      * @param double $longitude
      * @param int $radius
-     * @return int|false
+     * @return \stdClass|false
      */
     public function findNearestCasino($latitude, $longitude, $radius = 100);
 

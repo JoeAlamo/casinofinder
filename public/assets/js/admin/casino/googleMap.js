@@ -2,9 +2,7 @@
  * Created by Joe Alamo on 07/06/2016.
  */
 
-var googleMap = googleMap || {};
-
-googleMap = (function () {
+var googleMap = (function () {
     // Private variables
     var map,
         marker,
@@ -27,6 +25,8 @@ googleMap = (function () {
         marker = new google.maps.Marker({
             position: {lat: 54.9778, lng: -1.6129}
         });
+
+        return map;
     };
 
     var showLocation = function(LatLng) {

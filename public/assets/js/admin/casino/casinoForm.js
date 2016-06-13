@@ -36,7 +36,7 @@ $(document).ready(function() {
     function initAutocomplete() {
         autoComplete = new google.maps.places.Autocomplete(
             document.getElementById('address_autocomplete'),
-            {types: ['address']}
+            {types: []}
         );
 
         // Upon selecting address, populate form fields

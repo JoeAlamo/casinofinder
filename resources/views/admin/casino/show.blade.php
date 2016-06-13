@@ -39,10 +39,10 @@
                                     {{ $casinoOpeningTime->dayString }}
                                 </div>
                                 <div class="col-xs-4">
-                                    {{ $casinoOpeningTime->open_time->format('H:i a') }}
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $casinoOpeningTime->open_time)->format('H:i a') }}
                                 </div>
                                 <div class="col-xs-4">
-                                    {{ $casinoOpeningTime->close_time->format('H:i a') }}
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $casinoOpeningTime->close_time)->format('H:i a') }}
                                 </div>
                             </div>
                     @endforeach

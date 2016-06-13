@@ -106,6 +106,6 @@
 </div>
 
 <div class="panel-footer">
-    {!! Form::submit(null, ['class' => 'btn btn-success']) !!}
+    {!! Form::submit('Submit', ['class' => 'btn btn-success']) !!}
 </div>
 {!! Form::close() !!}

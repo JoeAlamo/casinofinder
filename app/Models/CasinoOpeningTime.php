@@ -19,16 +19,12 @@ class CasinoOpeningTime extends Model
         'day', 'open_time', 'close_time'
     ];
 
+    protected $appends = [
+        'day_string',
+    ];
+
     public function casino() {
         return $this->belongsTo(Casino::class);
-    }
-
-    public function getOpenTimeAttribute($value) {
-        return Carbon::createFromFormat('H:i:s', $value);
-    }
-
-    public function getCloseTimeAttribute($value) {
-        return Carbon::createFromFormat('H:i:s', $value);
     }
 
     public function getDayStringAttribute() {

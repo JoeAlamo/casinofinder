@@ -32,7 +32,7 @@ class CasinoFinderController extends Controller
     {
         $casinos = $this->casinoService->getAllCasinos(true)->keyBy('id');
         $casinos->map(function($casino) {
-            $casino->casinoOpeningTimes->map(function($openingTime) {
+            $casino->formattedCasinoOpeningTimes->map(function($openingTime) {
                 $openingTime->open_time = Carbon::createFromFormat('H:i:s', $openingTime->open_time)->format('H:i a');
                 $openingTime->close_time = Carbon::createFromFormat('H:i:s', $openingTime->close_time)->format('H:i a');
             });

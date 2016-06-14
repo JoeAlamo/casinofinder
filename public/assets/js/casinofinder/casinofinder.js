@@ -122,7 +122,7 @@ $(document).ready(function() {
         ];
 
 
-        $.each(casino.casino_opening_times, function(index, openingTime) {
+        $.each(casino.formatted_casino_opening_times, function(index, openingTime) {
             var openingTimeRow = [
                 '<div class="row">',
                     '<div class="col-xs-4">' + openingTime.day_string + '</div>',

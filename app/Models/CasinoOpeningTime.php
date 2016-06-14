@@ -28,7 +28,7 @@ class CasinoOpeningTime extends Model
     }
 
     public function getDayStringAttribute() {
-        $daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         return $daysOfWeek[$this->attributes['day']];
     }

@@ -24,9 +24,8 @@ class CasinoService implements CasinoServiceInterface
             return Casino::all();
         }
 
-        return Casino::with(['casinoLocation', 'casinoOpeningTimes' => function($query) {
-            $query->orderBy('day');
-        }])->get();
+        return Casino::with(['casinoLocation', 'casinoOpeningTimes'])
+            ->get();
     }
 
     /**
@@ -38,9 +37,8 @@ class CasinoService implements CasinoServiceInterface
             return Casino::findOrFail($id);
         }
 
-        return Casino::with(['casinoLocation', 'casinoOpeningTimes' => function($query) {
-            $query->orderBy('day');
-        }])->findOrFail($id);
+        return Casino::with(['casinoLocation', 'casinoOpeningTimes'])
+            ->findOrFail($id);
     }
 
     /**

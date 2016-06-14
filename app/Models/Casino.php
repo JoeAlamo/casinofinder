@@ -22,6 +22,9 @@ class Casino extends Model
     }
 
     public function casinoOpeningTimes() {
-        return $this->hasMany(CasinoOpeningTime::class);
+        return $this->hasMany(CasinoOpeningTime::class)
+            ->orderBy('day')
+            ->orderBy('open_time');
+    }
     }
 } 

@@ -102,9 +102,12 @@ $(document).ready(function() {
         form = $('#admin-casino-form');
 
     function initOpeningTimes() {
-        // Add any existing opening times to the array as jQuery objects
+        // Add any existing opening times to the array as jQuery objects and enable validators
         openingTimesListDiv.find('.opening-time').each(function(index, openingTime) {
             openingTimes[$(openingTime).attr('data-key')] = openingTime;
+            form.formValidation('addField', 'opening_time[' + openingTimesCount + '][day]', opening_time_dayValidators)
+                .formValidation('addField', 'opening_time[' + openingTimesCount + '][open_time]', opening_time_open_timeValidators)
+                .formValidation('addField', 'opening_time[' + openingTimesCount + '][close_time]', opening_time_close_timeValidators);
             openingTimesCount++;
         });
     }

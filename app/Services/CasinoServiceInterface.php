@@ -15,13 +15,16 @@ interface CasinoServiceInterface
 {
 
     /**
-     * @desc Retrieve all casinos, optionally with their child relations
+     * Retrieve all casinos, optionally with their child relations
+     *
      * @param bool $childRelations Whether to include child relations (location, opening times)
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllCasinos($childRelations = false);
 
     /**
+     * Retrieve individual casino, optionally with child relations
+     *
      * @param int $id
      * @param bool $childRelations
      * @return Casino
@@ -29,23 +32,26 @@ interface CasinoServiceInterface
     public function getCasino($id, $childRelations = false);
 
     /**
-     * @desc Retrieve nearest casino based on the location, within a set radius
+     * Retrieve nearest casino based on the location, within a set radius
+     *
      * @param double $latitude
      * @param double $longitude
      * @param int $radius
      * @return \stdClass|false
      */
-    public function findNearestCasino($latitude, $longitude, $radius = 100);
+    public function findNearestCasino($latitude, $longitude, $radius = 200);
 
     /**
-     * @desc Create a new casino, along with it's location and opening times if included
+     * Create a new casino, along with it's location and opening times if included
+     *
      * @param array $input
      * @return Casino
      */
     public function createNewCasino(array $input);
 
     /**
-     * @desc Update the given casino with the new $input
+     * Update the given casino with the new $input
+     *
      * @param int $id
      * @param array $input
      * @return Casino
@@ -53,7 +59,8 @@ interface CasinoServiceInterface
     public function updateCasino($id, array $input);
 
     /**
-     * @desc Permanently delete the given casino from storage
+     * Permanently delete the given casino from storage
+     * 
      * @param int $id
      * @return bool
      */

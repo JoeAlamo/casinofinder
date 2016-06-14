@@ -24,10 +24,16 @@ class CasinoFinderController extends Controller
      */
     private $casinoService;
 
-    public function __construct(CasinoServiceInterface $casinoService) {
+    public function __construct(CasinoServiceInterface $casinoService)
+    {
         $this->casinoService = $casinoService;
     }
 
+    /**
+     * Retrieve all of the casinos (with relations), format the opening times and return as JSON
+     *
+     * @return static Converted to JSON automatically
+     */
     public function getAllCasinos()
     {
         $casinos = $this->casinoService->getAllCasinos(true)->keyBy('id');
@@ -41,6 +47,13 @@ class CasinoFinderController extends Controller
         return $casinos;
     }
 
+    /**
+     * Find the nearest casino based on lat/lng and cache the result
+     *
+     * @param Request $request
+     * @param CasinoFinderValidator $casinoFinderValidator
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function findNearestCasino(Request $request, CasinoFinderValidator $casinoFinderValidator)
     {
         try {

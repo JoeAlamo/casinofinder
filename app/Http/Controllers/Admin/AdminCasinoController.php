@@ -83,9 +83,9 @@ class AdminCasinoController extends Controller
         $casino = $this->casinoService->getCasino($id, true);
 
         // Format casino data so it can bind to the form
-        $formattedCasino = array_merge($casino->casinoLocation->getOriginal(), $casino->getOriginal());
+        $formattedCasino = array_merge($casino->casinoLocation->getAttributes(), $casino->getAttributes());
         $formattedCasino['opening_time'] = $casino->casinoOpeningTimes->map(function ($model) {
-            return $model->getOriginal();
+            return $model->getAttributes();
         })->all();
 
         return \View::make('admin.casino.edit', ['casino' => (object)$formattedCasino])

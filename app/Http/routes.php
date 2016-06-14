@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::auth();
 
+// Disabling registration for this PoC app (all users are admins)
 Route::any('/register', function () {
     return Response::redirectTo('/');
 });

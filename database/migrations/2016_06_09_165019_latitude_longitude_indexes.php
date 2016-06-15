@@ -26,7 +26,8 @@ class LatitudeLongitudeIndexes extends Migration
     public function down()
     {
         Schema::table('casino_locations', function (Blueprint $table) {
-            $table->dropIndex(['casino_locations_latitude_index', 'casino_locations_longitude_index']);
+            $table->dropIndex('casino_locations_latitude_index');
+            $table->dropIndex('casino_locations_longitude_index');
         });
     }
 }

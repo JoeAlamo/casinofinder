@@ -58,7 +58,7 @@
                             {{-- Google Maps goes here --}}
                         </div>
                     </div>
-                    <h4>{{ $casino->casinoLocation->address }}, {{ $casino->casinoLocation->city }}, {{ $casino->casinoLocation->postal_code }}</h4>
+                    <h4 class="text-center margin-bottom-no"><strong>{{ $casino->casinoLocation->address }}, {{ $casino->casinoLocation->city }}, {{ $casino->casinoLocation->postal_code }}</strong></h4>
                 </div>
             </div>
         </div>

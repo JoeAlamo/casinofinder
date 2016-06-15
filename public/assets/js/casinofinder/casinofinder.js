@@ -221,7 +221,7 @@ $(document).ready(function() {
     }
 
     function displayAutoComplete() {
-        var autoCompleteInput = $('#users_address');
+        var autoCompleteInput = $('#users_address_container');
 
         if (!autoCompleteInput.is(':visible')) {
             autoCompleteInput.hide().removeClass('hidden').delay(1000).slideDown(800);

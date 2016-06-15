@@ -1,3 +1,96 @@
+/**
+ * NAV
+ */
+
+.navbar-default {
+    background-color: #3c3c3c;
+    -webkit-box-shadow: 0 2px 15px 0 rgba(0,0,0,0.53);
+    -moz-box-shadow: 0 2px 15px 0 rgba(0,0,0,0.53);
+    box-shadow: 0 2px 15px 0 rgba(0,0,0,0.53);
+    border-color: #333;
+}
+
+.navbar-default .navbar-brand, .navbar-default .navbar-nav>li>a {
+    color: #dedede;
+}
+
+.navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover,
+.navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
+    color: #ededed;
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus,
+.navbar-default .navbar-nav>.open>a:hover {
+    color: #3c3c3c;
+    background-color: #ededed;
+}
+
+/**
+ * PANELS
+ */
+
+.panel-default, .panel-default>.panel-heading, .panel-default>.panel-footer {
+    border-color: #ccc;
+}
+
+.panel-heading {
+    font-size: 20px;
+    text-transform: uppercase;
+    background-color: #f0f0f0;
+}
+
+.panel-body {
+    background-color: #fdfdfd;
+}
+
+.panel-footer {
+    background-color: #f0f0f0;
+}
+
+/**
+ * GOOGLE MAPS
+ */
+
+.map-responsive {
+    overflow:hidden;
+    padding-bottom:56.25%;
+    position:relative;
+    height:0;
+}
+.map-responsive #map {
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+
+/**
+ * GENERAL
+ */
+
+body {
+    background-color: #feffff;
+}
+
+.main-title {
+    font-size: 48px;
+}
+
+.container-fluid {
+    margin-top: -20px;
+    margin-bottom: 10px;
+    background-color: #ededed;
+}
+
+/**
+ * UTILITIES
+ */
+
+.margin-bottom-no {
+    margin-bottom: 0;
+}
+
 .margin-bottom-sm {
     margin-bottom: 5px;
 }
@@ -14,20 +107,6 @@
     margin-top: 20px;
 }
 
-.main-title {
-    font-size: 48px;
-}
-
-.map-responsive {
-    overflow:hidden;
-    padding-bottom:56.25%;
-    position:relative;
-    height:0;
-}
-.map-responsive #map {
-    left:0;
-    top:0;
-    height:100%;
-    width:100%;
-    position:absolute;
+.margin-right-md {
+    margin-right: 10px;
 }

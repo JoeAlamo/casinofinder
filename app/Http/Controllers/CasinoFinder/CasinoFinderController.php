@@ -11,6 +11,7 @@ namespace CasinoFinder\Http\Controllers\CasinoFinder;
 
 use Carbon\Carbon;
 use CasinoFinder\Http\Controllers\Controller;
+use CasinoFinder\Models\Casino;
 use CasinoFinder\Services\CasinoServiceInterface;
 use CasinoFinder\Validation\CasinoFinderValidator;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class CasinoFinderController extends Controller
     {
         $casinos = $this->casinoService->getAllCasinos(true)->keyBy('id');
         $casinos->map(function($casino) {
-            $casino->formattedCasinoOpeningTimes->map(function($openingTime) {
+            $casino->getFormattedCasinoOpeningTimes()->map(function($openingTime) {
                 $openingTime->open_time = Carbon::createFromFormat('H:i:s', $openingTime->open_time)->format('H:i a');
                 $openingTime->close_time = Carbon::createFromFormat('H:i:s', $openingTime->close_time)->format('H:i a');
             });

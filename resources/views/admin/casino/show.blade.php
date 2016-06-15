@@ -24,7 +24,7 @@
                         <p>No description added!</p>
                     @endif
                     <h2>Opening Times</h2>
-                    @if($casino->formattedCasinoOpeningTimes->isEmpty())
+                    @if($casino->getFormattedCasinoOpeningTimes()->isEmpty())
                         <p>No opening times have been added for this casino.</p>
                     @else
                             <div class="row">
@@ -33,7 +33,7 @@
                                 <div class="col-xs-4"><strong>Closing Time</strong></div>
                             </div>
                     @endif
-                    @foreach($casino->formattedCasinoOpeningTimes as $casinoOpeningTime)
+                    @foreach($casino->getFormattedCasinoOpeningTimes() as $casinoOpeningTime)
                             <div class="row">
                                 <div class="col-xs-4">
                                     {{ $casinoOpeningTime->dayString }}

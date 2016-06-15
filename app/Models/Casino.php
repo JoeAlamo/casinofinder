@@ -16,12 +16,7 @@ class Casino extends Model
     protected $fillable = [
         'name', 'description'
     ];
-
-    protected $appends = [
-        'formatted_casino_opening_times'
-    ];
-
-
+    
     public function casinoLocation() {
         return $this->hasOne(CasinoLocation::class);
     }
@@ -36,17 +31,17 @@ class Casino extends Model
      * Get the opening times for the casino in a collapsed, user friendly format
      * @return \Illuminate\Support\Collection
      */
-    public function getFormattedCasinoOpeningTimesAttribute() {
+    public function getFormattedCasinoOpeningTimes() {
         // Only calculate it once
-        if (isset($this->casino_opening_times_formatted)) {
-            return $this->casino_opening_times_formatted;
+        if (isset($this->formatted_casino_opening_times)) {
+            return $this->formatted_casino_opening_times;
         }
 
         // Format opening times, and identify the redundant contiguous opening times
         $casinoOpeningTimes = $this->casinoOpeningTimes->groupBy('day');
         $redundantOpeningTimes = $this->getRedundantContiguousOpeningTimes($casinoOpeningTimes);
 
-        $this->casino_opening_times_formatted = $casinoOpeningTimes->map(function($day) use ($redundantOpeningTimes) {
+        $this->formatted_casino_opening_times = $casinoOpeningTimes->map(function($day) use ($redundantOpeningTimes) {
             // Loop through that days opening times
             foreach($day as $openingTimeKey => $openingTime) {
                 foreach ($redundantOpeningTimes as $redundantOpeningTime) {
@@ -65,7 +60,7 @@ class Casino extends Model
             return $day->isEmpty();
         })->flatten();
 
-        return $this->casino_opening_times_formatted;
+        return $this->formatted_casino_opening_times;
     }
 
     /**
